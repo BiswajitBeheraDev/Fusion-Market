@@ -8,7 +8,6 @@ import bcrypt from "bcryptjs";
 const handler = NextAuth({
   adapter: PrismaAdapter(prisma),
   providers: [
-    // Email/Password Login
     Credentials({
       name: "Credentials",
       credentials: {
