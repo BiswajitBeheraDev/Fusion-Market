@@ -35,14 +35,16 @@ import {
 import { useEffect, useState, useMemo } from 'react';
 import { useCart } from '@/app/context/cartcontext';
 
-// Aapka Dummy Data (Categories extract karne ke liye)
-const dummyproducts = [
+export const dummyproducts = [
   { id: 1, category: "Electronics" },
+  { id: 2, category: "Mobiles" },        
   { id: 3, category: "Food-Drink" },
   { id: 4, category: "Accessories" },
+  { id: 5, category: "Footwear" },       
   { id: 6, category: "Home-Office" },
   { id: 7, category: "Kitchen-Dining" },
   { id: 8, category: "Home-Decor" },
+  { id: 9, category: "Watches" },        
   { id: 10, category: "Sports-Fitness" },
   { id: 12, category: "Toys-Games" },
   { id: 14, category: "Apparel" },
@@ -51,7 +53,6 @@ const dummyproducts = [
   { id: 19, category: "Outdoor-Sports" },
   { id: 25, category: "Books" },
 ];
-
 function MobileNav({ shoppingCount, foodCount, isShoppingPage, isFoodPage, isCartPage }: any) {
   const pathname = usePathname();
   const navItems = [
@@ -105,7 +106,6 @@ export default function Navbar() {
   const [searchInput, setSearchInput] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(true);
 
-  // --- Extract Unique Categories from dummyproducts ---
   const categories = useMemo(() => {
     const uniqueCats = Array.from(new Set(dummyproducts.map(p => p.category)));
     return uniqueCats.sort();
@@ -141,20 +141,17 @@ export default function Navbar() {
       <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-[#fafafa]/80 backdrop-blur-md">
         <div className="container mx-auto flex h-20 items-center justify-between px-6 gap-4">
           
-          {/* LOGO */}
           <Link href="/dashboard" className="flex items-center gap-2 text-3xl font-black italic text-gray-900 tracking-tighter shrink-0 transition-transform hover:scale-105">
             <Utensils className="h-8 w-8 text-orange-600" />
             <span className="hidden lg:inline uppercase">MYSTORE</span>
           </Link>
 
-          {/* LEFT NAV */}
           <nav className="hidden md:flex items-center gap-6">
             <Link href="/dashboard" className={`text-xs font-black italic uppercase tracking-widest ${pathname === '/dashboard' ? 'text-orange-600' : 'text-gray-500'}`}>Home</Link>
             <Link href="/shopping" className={`text-xs font-black italic uppercase tracking-widest ${isShoppingPage ? 'text-orange-600' : 'text-gray-500'}`}>Shopping</Link>
             <Link href="/food/menu" className={`text-xs font-black italic uppercase tracking-widest ${isFoodPage ? 'text-orange-600' : 'text-gray-500'}`}>Food</Link>
           </nav>
 
-          {/* --- SEARCH & CATEGORIES (MIDDLE SECTION) --- */}
           <div className="hidden md:flex flex-1 items-center justify-center gap-2 max-w-xl">
             {isShoppingPage && (
               <>
@@ -168,7 +165,6 @@ export default function Navbar() {
                   />
                 </div>
 
-                {/* DROPDOWN PLACED EXACTLY AS PER YOUR IMAGE */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" className="h-10 rounded-xl border-2 border-gray-100 bg-white font-black italic uppercase text-[9px] tracking-tighter flex gap-1 hover:border-orange-200">
@@ -194,7 +190,6 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* RIGHT ACTIONS */}
           <div className="flex items-center gap-3 shrink-0">
             {!isCartPage && activeCount > 0 && (
               <Button variant="ghost" size="icon" className="relative h-11 w-11 bg-white shadow-sm border rounded-xl" asChild>
@@ -207,27 +202,50 @@ export default function Navbar() {
               </Button>
             )}
 
-            {isLoggedIn && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="h-11 w-11 rounded-xl p-0 overflow-hidden ring-2 ring-orange-50">
-                    <Avatar className="h-full w-full rounded-none">
-                      <AvatarImage src="https://github.com/shadcn.png" />
-                      <AvatarFallback className="font-black">AD</AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56 mt-3 rounded-2xl" align="end">
-                  <DropdownMenuItem asChild className="rounded-xl p-3 font-bold italic uppercase text-xs cursor-pointer">
-                    <Link href="/admin/orders" className="flex items-center gap-3"><LayoutDashboard size={16}/> Admin</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="rounded-xl p-3 font-bold italic uppercase text-xs text-red-600 cursor-pointer">
-                    <LogOut size={16} className="mr-3" /> Logout
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
+           {isLoggedIn && (
+  <DropdownMenu>
+    <DropdownMenuTrigger asChild>
+      <Button variant="ghost" className="h-11 w-11 rounded-xl p-0 overflow-hidden ring-2 ring-orange-50">
+        <Avatar className="h-full w-full rounded-none">
+          <AvatarImage src="https://github.com/shadcn.png" />
+          <AvatarFallback className="font-black">AD</AvatarFallback>
+        </Avatar>
+      </Button>
+    </DropdownMenuTrigger>
+    
+    {/* SIRF EK BAR CONTENT OPEN HOGA */}
+    <DropdownMenuContent className="w-56 mt-3 rounded-2xl p-2 shadow-2xl border-none bg-white" align="end">
+      <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 px-3 py-2">
+        Account Panel
+      </DropdownMenuLabel>
+      
+      <DropdownMenuSeparator className="bg-slate-50" />
 
+      {/* USER DASHBOARD LINK */}
+      <DropdownMenuItem asChild className="rounded-xl p-3 font-bold italic uppercase text-[10px] focus:bg-orange-50 focus:text-orange-600 cursor-pointer transition-all">
+        <Link href="/userdashboard/order" className="flex items-center gap-3">
+          <ShoppingBag size={16} className="text-orange-600"/> My Orders
+        </Link>
+      </DropdownMenuItem>
+
+      {/* ADMIN PANEL LINK */}
+      <DropdownMenuItem asChild className="rounded-xl p-3 font-bold italic uppercase text-[10px] focus:bg-blue-50 focus:text-blue-600 cursor-pointer transition-all">
+        <Link href="/admin/orders" className="flex items-center gap-3">
+          <LayoutDashboard size={16} className="text-blue-600"/> Admin Panel
+        </Link>
+      </DropdownMenuItem>
+
+      <DropdownMenuSeparator className="bg-slate-50" />
+
+      {/* LOGOUT */}
+      <DropdownMenuItem className="rounded-xl p-3 font-bold italic uppercase text-[10px] text-red-600 focus:bg-red-50 cursor-pointer transition-all">
+        <Link href="/" className="flex items-center w-full">
+          <LogOut size={16} className="mr-3" /> Logout
+        </Link>
+      </DropdownMenuItem>
+    </DropdownMenuContent>
+  </DropdownMenu>
+)}
             <MobileNav 
               shoppingCount={shoppingCount} 
               foodCount={foodCount} 

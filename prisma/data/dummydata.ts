@@ -273,6 +273,200 @@ image: "https://images.unsplash.com/photo-1574081106041-f16966db53d6?q=80&w=1170
     image: "https://images.unsplash.com/photo-1507149833265-60c372daea22?q=80&w=800",
     category: "Electronics",
   },
+{
+    id: 35,
+    name: "iPhone 15 Pro",
+    description: "Titanium design, A17 Pro chip, and a versatile 48MP Main camera system.",
+    price: 999.00,
+    image: "https://images.unsplash.com/photo-1696446701796-da61225697cc?q=80&w=1170&auto=format&fit=crop",
+    category: "Mobiles",
+  },
+  {
+    id: 36,
+    name: "Samsung Galaxy S24 Ultra",
+    description: "AI-powered smartphone with 200MP camera and integrated S Pen.",
+    price: 1299.99,
+    image: "https://images.unsplash.com/photo-1707064973341-3377751e1845?q=80&w=1170&auto=format&fit=crop",
+    category: "Mobiles",
+  },
+  {
+    id: 37,
+    name: "Google Pixel 8 Pro",
+    description: "The best Google camera yet, with advanced AI features for photos and videos.",
+    price: 899.00,
+    image: "https://images.unsplash.com/photo-1696429150370-98606f3583f7?q=80&w=687&auto=format&fit=crop",
+    category: "Mobiles",
+  },
+
+  {
+    id: 38,
+    name: "Dell XPS 15",
+    description: "Powerful performance with a stunning 4K OLED display for creators.",
+    price: 1899.00,
+    image: "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?q=80&w=1170&auto=format&fit=crop",
+    category: "Electronics",
+  },
+  {
+    id: 39,
+    name: "ASUS ROG Zephyrus G14",
+    description: "Compact gaming laptop with high-end RTX graphics and 120Hz display.",
+    price: 1499.00,
+    image: "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?q=80&w=1170&auto=format&fit=crop",
+    category: "Electronics",
+  },
+
+  {
+    id: 40,
+    name: "Rolex Submariner Date",
+    description: "The ultimate diver's watch, a benchmark in its genre with oyster steel.",
+    price: 12500.00,
+    image: "https://images.unsplash.com/photo-1547996160-81dfa63595dd?q=80&w=687&auto=format&fit=crop",
+    category: "Watches",
+  },
+  {
+    id: 41,
+    name: "Apple Watch Ultra 2",
+    description: "The most rugged and capable Apple Watch for athletes and adventurers.",
+    price: 799.00,
+    image: "https://images.unsplash.com/photo-1695663737526-a010be596700?q=80&w=627&auto=format&fit=crop",
+    category: "Watches",
+  },
+  {
+    id: 42,
+    name: "Casio G-Shock GA-2100",
+    description: "Iconic carbon core guard structure, water-resistant and shock-proof.",
+    price: 99.00,
+    image: "https://images.unsplash.com/photo-1619134716292-0aa0697921a8?q=80&w=627&auto=format&fit=crop",
+    category: "Watches",
+  },
+
+  // --- SHOES ---
+  {
+    id: 43,
+    name: "Nike Air Jordan 1 Retro",
+    description: "The classic sneaker that started it all. Premium leather and timeless style.",
+    price: 180.00,
+    image: "https://images.unsplash.com/photo-1584735175315-9d5821762224?q=80&w=687&auto=format&fit=crop",
+    category: "Footwear",
+  },
+  {
+    id: 44,
+    name: "Adidas Ultraboost Light",
+    description: "The lightest Ultraboost ever made for incredible energy return and comfort.",
+    price: 190.00,
+    image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=687&auto=format&fit=crop",
+    category: "Footwear",
+  },
+  {
+    id: 45,
+    name: "Classic Chelsea Boots",
+    description: "Handcrafted suede boots with an elastic side panel for a sophisticated look.",
+    price: 150.00,
+    image: "https://images.unsplash.com/photo-1638247025967-b4e38f787b76?q=80&w=735&auto=format&fit=crop",
+    category: "Footwear",
+  },
+
+  // --- DRESSES (APPAREL) ---
+  {
+    id: 46,
+    name: "Floral Summer Maxi Dress",
+    description: "Lightweight and breathable floral dress, perfect for beach days.",
+    price: 59.99,
+    image: "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?q=80&w=688&auto=format&fit=crop",
+    category: "Dresses",
+  },
+  {
+    id: 47,
+    name: "Formal Evening Gown",
+    description: "Elegant floor-length silk gown with a stunning slit for formal events.",
+    price: 199.00,
+    image: "https://images.unsplash.com/photo-1566174053879-31528523f8ae?q=80&w=708&auto=format&fit=crop",
+    category: "Dresses",
+  },
+  {
+    id: 48,
+    name: "Denim Jacket - Vintage Blue",
+    description: "Classic oversized denim jacket that goes with everything.",
+    price: 79.00,
+    image: "https://images.unsplash.com/photo-1529139513477-3235a4ad4df0?q=80&w=687&auto=format&fit=crop",
+    category: "Apparel",
+  },
+  {
+    id: 49,
+    name: "Cotton Linen Jumpsuit",
+    description: "Comfortable and stylish one-piece jumpsuit for a casual outing.",
+    price: 85.00,
+    image: "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?q=80&w=687&auto=format&fit=crop",
+    category: "Dresses",
+  },
+  {
+    id: 50,
+    name: "Oversized Cashmere Sweater",
+    description: "Pure luxury cashmere sweater for ultimate warmth and softness.",
+    price: 120.00,
+    image: "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?q=80&w=1072&auto=format&fit=crop",
+    category: "Apparel",
+  },
+...Array.from({ length: 30 }, (_, i) => ({
+  id: 51 + i,
+  name: ["iPhone 15", "Samsung S24", "OnePlus 12", "Google Pixel 8", "Redmi Note 13", "Nothing Phone 2", "Vivo X100", "Motorola Edge", "Asus ROG", "Realme GT"][i % 10] + ` Edition ${Math.floor(i / 10) + 1}`,
+  description: "Next-gen flagship smartphone with ultra-fast processor and pro-grade camera.",
+  price: 599 + (i * 20),
+  // Fixed URL format for Mobiles
+  image: `https://images.unsplash.com/photo-${["1511707171634-5f897ff02aa9", "1598327105666-5b89351aff97", "1580910051074-3eb694886505", "1616348436168-de43ad0db179"][i % 4]}?q=80&w=800&auto=format&fit=crop`,
+  category: "Mobiles",
+})),
+...Array.from({ length: 30 }, (_, i) => ({
+  id: 81 + i,
+  name: ["Nike Air Jordan", "Adidas Ultraboost", "Puma Velocity", "Reebok Classic", "New Balance 550", "Asics Gel", "Vans Old Skool", "Converse All Star", "Skechers Arch Fit", "Jordan Retro"][i % 10] + ` Ver-${i}`,
+  description: "Premium comfort and iconic style in every step. Built for performance.",
+  price: 80 + (i * 5),
+  image: `https://images.unsplash.com/photo-${[
+    "1542291026-7eec264c27ff", "1595950653106-6c9ebd614d3a", "1560769129-d6762c102921", 
+    "1525966222134-9f9d9739b06c", "1491553895911-0055eca6402d", "1606107557195-0e29a4b5b4aa"
+  ][i % 6]}?q=80&w=800&auto=format&fit=crop&sig=${81+i}`,
+  category: "Footwear",
+})),
+...Array.from({ length: 30 }, (_, i) => {
+  const watchImages = [
+    "1523275335684-37898b6baf30", "1542496658-e33a6d0d50f6", "1508685096489-7aac2914b2b3",
+    "1617048221367-4eb7c37f85b4", "1614164185128-e4ec99c436d7", "1523170335258-f5ed11847a49",
+    "1546868871-7041f2a55e12", "1539533109476-83c9d1a25d74", "1612817288484-6f916006741a",
+    "1509112756314-34a0badb29d4"
+  ];
+  return {
+    id: 111 + i,
+    name: ["Rolex", "Omega", "Apple Watch", "Samsung", "Fossil", "G-Shock", "Tissot", "Seiko", "Garmin", "Tag Heuer"][i % 10] + ` Edition ${i + 1}`,
+    description: "Premium watch with water resistance and elegant design.",
+    price: 150 + (i * 10),
+    image: `https://images.unsplash.com/photo-${watchImages[i % 10]}?q=80&w=800&auto=format&fit=crop`,
+    category: "Watches",
+  };
+}),
+...Array.from({ length: 30 }, (_, i) => ({
+  id: 141 + i,
+  name: ["Floral Maxi Dress", "Evening Silk Gown", "Denim Jacket", "Summer Jumpsuit", "Party Wear Suit", "Casual Cotton Dress", "Designer Kurta", "Winter Woolen Coat", "Office Wear Blazer", "Boho Chic Dress"][i % 10] + ` Style-${i}`,
+  description: "Modern fashion for the contemporary look. High-quality fabric and fit.",
+  price: 45 + (i * 10),
+  image: `https://images.unsplash.com/photo-${[
+    "1539109136881-3be06109c783", "1490481651871-ab68de25d43d", "1515372039744-b8f02a3ae446",
+    "1566174053879-31528523f8ae", "1594633312681-425c7b97ccd1"
+  ][i % 5]}?q=80&w=800&auto=format&fit=crop&sig=${141+i}`,
+  category: "Apparel",
+})),
+...Array.from({ length: 30 }, (_, i) => ({
+  id: 171 + i,
+  name: ["MacBook Pro", "Dell XPS 13", "HP Spectre", "Lenovo Yoga", "ASUS Zenbook", "Acer Swift", "Microsoft Surface", "Razer Blade", "MSI Prestige", "Samsung Galaxy Book"][i % 10] + ` v${2024 + Math.floor(i/10)}`,
+  description: "Powerful performance for professionals and gamers. Lightweight and durable.",
+  price: 799 + (i * 50),
+  image: `https://images.unsplash.com/photo-${[
+    "1496181133206-80ce9b88a853", "1517336714731-489689fd1ca8", "1588872657578-7efd1f1555ed",
+    "1593642632823-8f785ba67e45", "1611186873503-3952bb617f89"
+  ][i % 5]}?q=80&w=800&auto=format&fit=crop&sig=${171+i}`,
+  category: "Electronics",
+})),
+
+
 ];
 
 
