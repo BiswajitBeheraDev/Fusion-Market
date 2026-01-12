@@ -39,7 +39,6 @@ const handler = NextAuth({
       },
     }),
 
-    // GitHub Login (tera ID aur SECRET se)
     GitHub({
       clientId: process.env.GITHUB_ID!,
       clientSecret: process.env.GITHUB_SECRET!,
@@ -51,7 +50,8 @@ const handler = NextAuth({
   session: {
     strategy: "jwt",
   },
-  secret: process.env.AUTH_SECRET,
+  // Fixed Secret Logic: Vercel par NEXTAUTH_SECRET hona zaroori hai
+  secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET,
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
