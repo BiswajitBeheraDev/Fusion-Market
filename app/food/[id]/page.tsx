@@ -59,7 +59,6 @@ export default function FoodDetailsPage({ params }: { params: Promise<{ id: stri
         </Button>
 
         <div className="grid md:grid-cols-2 gap-12 bg-white rounded-[2rem] shadow-xl border border-gray-100 p-6 md:p-10">
-          {/* IMAGE SECTION */}
           <div className="relative h-80 md:h-[450px] overflow-hidden rounded-2xl shadow-inner bg-gray-50">
             {item.image ? (
               <Image
@@ -82,7 +81,6 @@ export default function FoodDetailsPage({ params }: { params: Promise<{ id: stri
             </div>
           </div>
 
-          {/* CONTENT SECTION */}
           <div className="flex flex-col justify-center space-y-6">
             <div>
               <div className="flex items-center gap-2 mb-2">

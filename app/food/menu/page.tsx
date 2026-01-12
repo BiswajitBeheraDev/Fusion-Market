@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
 
-import { dummyMenu } from '@/prisma/data/dummydata'; // Apna path check kar lena
+import { dummyMenu } from '@/prisma/data/dummydata'; 
 import { useCart } from '@/app/context/cartcontext';
 
 export default function FoodMenuPage() {
@@ -20,7 +20,6 @@ export default function FoodMenuPage() {
   const [isVegOnly, setIsVegOnly] = useState(false);
   const { foodCart, addToFoodCart } = useCart();
 
-  // --- Filter Logic ---
   const filteredMenu = useMemo(() => {
     return dummyMenu.filter((item) => {
       const matchesSearch = searchQuery === '' || 
@@ -33,7 +32,6 @@ export default function FoodMenuPage() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] pb-24">
       
-      {/* --- CYBER 3D HERO SECTION --- */}
       <section className="relative h-[450px] flex items-center justify-center overflow-hidden bg-slate-950 rounded-b-[80px] shadow-2xl">
         <div className="absolute inset-0 z-0">
           <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[70%] bg-orange-600/20 blur-[120px] rounded-full animate-pulse" />
