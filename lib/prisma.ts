@@ -6,12 +6,16 @@ import { PrismaClient } from '@prisma/client';
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
 
-declare global {
-  var prisma: PrismaClient | undefined;
-}
+// Isko block scope se bahar declare karo taaki global access mile
+const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
-export const prisma = global.prisma || new PrismaClient({ adapter });
+export const prisma =
+  globalForPrisma.prisma ||
+  new PrismaClient({
+    adapter,
+    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+  });
 
-if (process.env.NODE_ENV !== 'production') global.prisma = prisma;
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 
 export default prisma;
