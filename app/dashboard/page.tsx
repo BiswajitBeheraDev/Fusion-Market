@@ -5,17 +5,42 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import { ShoppingBag, UtensilsCrossed, Star } from 'lucide-react';
+import { ShoppingBag, UtensilsCrossed, Star, Loader2 } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 export default function Dashboard() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const [isFood, setIsFood] = useState(true);
 
+  // 1. Session Guard: Agar logged in nahi hai toh login page bhej do
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/login');
+    }
+  }, [status, router]);
+
+  // Image toggle interval
   useEffect(() => {
     const interval = setInterval(() => {
       setIsFood((prev) => !prev);
     }, 4000);
     return () => clearInterval(interval);
   }, []);
+
+  // 2. Loading State: Jab tak session check ho raha hai
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen bg-[#7171da] flex flex-col items-center justify-center text-white font-sans">
+        <Loader2 className="animate-spin mb-4" size={48} />
+        <h2 className="text-2xl font-black italic tracking-tighter">SECURE ACCESS...</h2>
+      </div>
+    );
+  }
+
+  // 3. Unauthorized access protection
+  if (!session) return null;
 
   return (
     <main className="min-h-screen bg-[#7171da] overflow-hidden font-sans">
@@ -30,7 +55,9 @@ export default function Dashboard() {
             >
               <div className="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm border mb-6">
                 <Star className="text-orange-500 fill-orange-500" size={16} />
-                <span className="text-xs font-bold tracking-widest text-gray-600 uppercase">Trusted by 10k+ users</span>
+                <span className="text-xs font-bold tracking-widest text-gray-600 uppercase">
+                  Happy to see you, {session?.user?.name?.split(" ")[0]}!
+                </span>
               </div>
               
               <h1 className="text-5xl md:text-7xl font-black tracking-tighter italic text-gray-900 leading-[0.95]">
@@ -38,7 +65,7 @@ export default function Dashboard() {
                 <span className="text-orange-600 drop-shadow-sm">MYSTORE</span>
               </h1>
               <p className="mt-6 text-lg md:text-xl text-gray-500 font-medium max-w-lg mx-auto lg:mx-0">
-                Shop latest products or order delicious food – all in one place. Switch between your needs seamlessly.
+                Hi {session?.user?.name}, shop latest products or order delicious food – all in one place. Switch between your needs seamlessly.
               </p>
             </motion.div>
 
@@ -57,6 +84,7 @@ export default function Dashboard() {
             </motion.div>
           </div>
 
+          {/* Animated Image Section */}
           <div className="order-1 lg:order-2 flex justify-center items-center relative py-12">
             <div className="absolute w-[350px] h-[350px] md:w-[600px] md:h-[600px] bg-orange-200/30 rounded-full blur-[100px] -z-10" />
 
@@ -67,7 +95,6 @@ export default function Dashboard() {
               style={{ transformStyle: "preserve-3d" }}
             >
               <div className="absolute inset-0 bg-gray rounded-full shadow-[0_40px_100px_rgba(0,0,0,0.1)] border-[15px] border-white flex items-center justify-center overflow-hidden">
-                
                 <AnimatePresence mode="wait">
                   {isFood ? (
                     <motion.div
@@ -78,11 +105,7 @@ export default function Dashboard() {
                       exit={{ opacity: 0, scale: 1.2 }}
                       transition={{ duration: 0.5 }}
                     >
-                      <img 
-                        src="/images (1).jpeg" 
-                        alt="Burger" 
-                        className="w-[100%] h-auto drop-shadow-2xl"
-                      />
+                      <img src="/images (1).jpeg" alt="Burger" className="w-[100%] h-auto drop-shadow-2xl" />
                       <span className="absolute bottom-10 bg-black text-white px-4 py-1 rounded-full text-xs font-black italic">HOT & FRESH</span>
                     </motion.div>
                   ) : (
@@ -94,11 +117,7 @@ export default function Dashboard() {
                       exit={{ opacity: 0, scale: 1.2 }}
                       transition={{ duration: 0.5 }}
                     >
-                      <img 
-                        src="/shoe.jpg" 
-                        alt="Shoe" 
-                        className="w-[85%] h-auto drop-shadow-2xl -rotate-12"
-                      />
+                      <img src="/shoe.jpg" alt="Shoe" className="w-[85%] h-auto drop-shadow-2xl -rotate-12" />
                       <span className="absolute bottom-10 bg-orange-600 text-white px-4 py-1 rounded-full text-xs font-black italic uppercase">New Arrivals</span>
                     </motion.div>
                   )}
@@ -118,12 +137,15 @@ export default function Dashboard() {
             </motion.div>
           </div>
         </div>
-        <div className="container mx-auto px-6 flex justify-center items-center gap-2">
-           <div className="w-2 h-2 bg-orange-600 rounded-full" />
-           <p className="text-xs font-bold text-red-400 uppercase tracking-[0.2em]">Logged in successfully! Ready to serve.</p>
+
+        {/* Footer Status */}
+        <div className="mt-12 container mx-auto px-6 flex justify-center items-center gap-2">
+           <div className="w-2 h-2 bg-green-400 rounded-full animate-ping" />
+           <p className="text-xs font-bold text-white/80 uppercase tracking-[0.2em]">
+             Connected as {session.user?.email}
+           </p>
         </div>
       </section>
-
     </main>
   );
 }

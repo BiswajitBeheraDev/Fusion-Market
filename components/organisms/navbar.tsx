@@ -6,7 +6,14 @@
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { 
+  Sheet, 
+  SheetContent, 
+  SheetTrigger, 
+  SheetHeader, 
+  SheetTitle, 
+  SheetDescription 
+} from '@/components/ui/sheet'; // Added Header, Title, Description
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -21,7 +28,6 @@ import {
   ChevronDown,
   Grid,
   ShoppingBag,
-  Zap,
   Tag
 } from 'lucide-react';
 import {
@@ -34,6 +40,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useEffect, useState, useMemo } from 'react';
 import { useCart } from '@/app/context/cartcontext';
+import { signOut } from 'next-auth/react';
 
 export const dummyproducts = [
   { id: 1, category: "Electronics" },
@@ -53,7 +60,8 @@ export const dummyproducts = [
   { id: 19, category: "Outdoor-Sports" },
   { id: 25, category: "Books" },
 ];
-function MobileNav({ shoppingCount, foodCount, isShoppingPage, isFoodPage, isCartPage }: any) {
+
+function MobileNav({ shoppingCount, foodCount }: any) {
   const pathname = usePathname();
   const navItems = [
     { name: 'Home', href: '/dashboard', icon: Home },
@@ -62,21 +70,25 @@ function MobileNav({ shoppingCount, foodCount, isShoppingPage, isFoodPage, isCar
     { name: 'Admin Dashboard', href: '/admin/orders', icon: LayoutDashboard },
   ];
 
-  const displayCount = isShoppingPage ? shoppingCount : isFoodPage ? foodCount : (shoppingCount + foodCount);
-  const cartLink = isShoppingPage ? '/shopping/cart' : '/food/foodcart';
-
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="md:hidden">
+        <Button variant="ghost" size="icon" className="md:hidden h-11 w-11 bg-white border rounded-xl shadow-sm">
           <Menu className="h-6 w-6" />
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="w-72 bg-[#fafafa]">
-        <div className="flex flex-col gap-6 mt-10">
-          <Link href="/dashboard" className="text-3xl font-black italic text-primary flex items-center gap-2 tracking-tighter">
-            <Utensils className="h-7 w-7 text-orange-600" /> MyStore
-          </Link>
+        {/* --- FIX: Added SheetHeader and Title for Accessibility --- */}
+        <SheetHeader className="text-left border-b pb-4">
+          <SheetTitle className="text-2xl font-black italic text-orange-600 tracking-tighter flex items-center gap-2">
+            <Utensils className="h-7 w-7" /> MYSTORE
+          </SheetTitle>
+          <SheetDescription className="sr-only">
+            Navigation Menu for Mobile Users
+          </SheetDescription>
+        </SheetHeader>
+
+        <div className="flex flex-col gap-6 mt-6">
           <div className="flex flex-col gap-2">
             {navItems.map((item) => (
               <Link
@@ -139,19 +151,22 @@ export default function Navbar() {
   return (
     <>
       <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-[#fafafa]/80 backdrop-blur-md">
-        <div className="container mx-auto flex h-20 items-center justify-between px-6 gap-4">
+        {/* Main Top Navbar */}
+        <div className="container mx-auto flex h-20 items-center justify-between px-4 md:px-6 gap-2 md:gap-4">
           
-          <Link href="/dashboard" className="flex items-center gap-2 text-3xl font-black italic text-gray-900 tracking-tighter shrink-0 transition-transform hover:scale-105">
-            <Utensils className="h-8 w-8 text-orange-600" />
-            <span className="hidden lg:inline uppercase">MYSTORE</span>
+          <Link href="/dashboard" className="flex items-center gap-2 text-2xl md:text-3xl font-black italic text-gray-900 tracking-tighter shrink-0 transition-transform hover:scale-105">
+            <Utensils className="h-7 w-7 md:h-8 md:w-8 text-orange-600" />
+            <span className="hidden sm:inline uppercase">MYSTORE</span>
           </Link>
 
+          {/* Desktop Links */}
           <nav className="hidden md:flex items-center gap-6">
             <Link href="/dashboard" className={`text-xs font-black italic uppercase tracking-widest ${pathname === '/dashboard' ? 'text-orange-600' : 'text-gray-500'}`}>Home</Link>
             <Link href="/shopping" className={`text-xs font-black italic uppercase tracking-widest ${isShoppingPage ? 'text-orange-600' : 'text-gray-500'}`}>Shopping</Link>
             <Link href="/food/menu" className={`text-xs font-black italic uppercase tracking-widest ${isFoodPage ? 'text-orange-600' : 'text-gray-500'}`}>Food</Link>
           </nav>
 
+          {/* Desktop Search & Store */}
           <div className="hidden md:flex flex-1 items-center justify-center gap-2 max-w-xl">
             {isShoppingPage && (
               <>
@@ -167,7 +182,7 @@ export default function Navbar() {
 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="h-10 rounded-xl border-2 border-gray-100 bg-white font-black italic uppercase text-[9px] tracking-tighter flex gap-1 hover:border-orange-200">
+                    <Button variant="outline" className="h-10 rounded-xl border-2 border-gray-100 bg-white font-black italic uppercase text-[9px] tracking-tighter flex gap-1">
                       Store <ChevronDown size={12} />
                     </Button>
                   </DropdownMenuTrigger>
@@ -190,7 +205,8 @@ export default function Navbar() {
             )}
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2 md:gap-3 shrink-0">
+            {/* Cart Badge */}
             {!isCartPage && activeCount > 0 && (
               <Button variant="ghost" size="icon" className="relative h-11 w-11 bg-white shadow-sm border rounded-xl" asChild>
                 <Link href={activeCartLink}>
@@ -202,50 +218,44 @@ export default function Navbar() {
               </Button>
             )}
 
+           {/* Profile Menu */}
            {isLoggedIn && (
-  <DropdownMenu>
-    <DropdownMenuTrigger asChild>
-      <Button variant="ghost" className="h-11 w-11 rounded-xl p-0 overflow-hidden ring-2 ring-orange-50">
-        <Avatar className="h-full w-full rounded-none">
-          <AvatarImage src="https://github.com/shadcn.png" />
-          <AvatarFallback className="font-black">AD</AvatarFallback>
-        </Avatar>
-      </Button>
-    </DropdownMenuTrigger>
-    
-    {/* SIRF EK BAR CONTENT OPEN HOGA */}
-    <DropdownMenuContent className="w-56 mt-3 rounded-2xl p-2 shadow-2xl border-none bg-white" align="end">
-      <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 px-3 py-2">
-        Account Panel
-      </DropdownMenuLabel>
-      
-      <DropdownMenuSeparator className="bg-slate-50" />
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="h-11 w-11 rounded-xl p-0 overflow-hidden ring-2 ring-orange-50">
+                    <Avatar className="h-full w-full rounded-none">
+                      <AvatarImage src="https://github.com/shadcn.png" />
+                      <AvatarFallback className="font-black">AD</AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56 mt-3 rounded-2xl p-2 shadow-2xl border-none bg-white" align="end">
+                  <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 px-3 py-2">Account Panel</DropdownMenuLabel>
+                  <DropdownMenuSeparator className="bg-slate-50" />
+                  <DropdownMenuItem asChild className="rounded-xl p-3 font-bold italic uppercase text-[10px] focus:bg-orange-50 focus:text-orange-600 cursor-pointer transition-all">
+                    <Link href="/userdashboard/order" className="flex items-center gap-3">
+                      <ShoppingBag size={16} className="text-orange-600"/> My Orders
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild className="rounded-xl p-3 font-bold italic uppercase text-[10px] focus:bg-blue-50 focus:text-blue-600 cursor-pointer transition-all">
+                    <Link href="/admin/orders" className="flex items-center gap-3">
+                      <LayoutDashboard size={16} className="text-blue-600"/> Admin Panel
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="bg-slate-50" />
+                  <DropdownMenuItem 
+                    className="cursor-pointer text-red-600"
+                    onSelect={(e) => {
+                      e.preventDefault(); 
+                      signOut({ callbackUrl: "/login", redirect: true });
+                    }}
+                  >
+                    <LogOut size={16} className="mr-3" /> signout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
 
-      {/* USER DASHBOARD LINK */}
-      <DropdownMenuItem asChild className="rounded-xl p-3 font-bold italic uppercase text-[10px] focus:bg-orange-50 focus:text-orange-600 cursor-pointer transition-all">
-        <Link href="/userdashboard/order" className="flex items-center gap-3">
-          <ShoppingBag size={16} className="text-orange-600"/> My Orders
-        </Link>
-      </DropdownMenuItem>
-
-      {/* ADMIN PANEL LINK */}
-      <DropdownMenuItem asChild className="rounded-xl p-3 font-bold italic uppercase text-[10px] focus:bg-blue-50 focus:text-blue-600 cursor-pointer transition-all">
-        <Link href="/admin/orders" className="flex items-center gap-3">
-          <LayoutDashboard size={16} className="text-blue-600"/> Admin Panel
-        </Link>
-      </DropdownMenuItem>
-
-      <DropdownMenuSeparator className="bg-slate-50" />
-
-      {/* LOGOUT */}
-      <DropdownMenuItem className="rounded-xl p-3 font-bold italic uppercase text-[10px] text-red-600 focus:bg-red-50 cursor-pointer transition-all">
-        <Link href="/" className="flex items-center w-full">
-          <LogOut size={16} className="mr-3" /> Logout
-        </Link>
-      </DropdownMenuItem>
-    </DropdownMenuContent>
-  </DropdownMenu>
-)}
             <MobileNav 
               shoppingCount={shoppingCount} 
               foodCount={foodCount} 
@@ -255,9 +265,53 @@ export default function Navbar() {
             />
           </div>
         </div>
-      </header>
 
-      {/* WhatsApp Button logic remains same... */}
+        {/* --- MOBILE SEARCH BAR & CATEGORIES (VISIBLE ON MOBILE ONLY) --- */}
+        {isShoppingPage && (
+          <div className="md:hidden px-4 pb-4 flex flex-col gap-3 border-t pt-3 border-gray-100 bg-white">
+            {/* Mobile Search Input */}
+            <div className="relative w-full">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                placeholder="SEARCH PRODUCTS..."
+                className="pl-10 h-10 border-2 border-gray-100 bg-gray-50 rounded-xl font-bold italic text-[11px]"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+              />
+            </div>
+            
+            {/* Mobile Categories Horizontal Scroll */}
+            <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+              <Link href="/shopping">
+                <Badge 
+                  variant="outline" 
+                  className={`whitespace-nowrap rounded-lg px-4 py-1.5 font-black italic uppercase text-[9px] border-2 transition-all ${
+                    !searchParams.get('category') 
+                    ? 'bg-orange-600 text-white border-orange-600' 
+                    : 'bg-white text-gray-500 border-gray-100'
+                  }`}
+                >
+                  All Items
+                </Badge>
+              </Link>
+              {categories.map((cat) => (
+                <Link key={cat} href={`/shopping?category=${cat.toLowerCase()}`}>
+                  <Badge 
+                    variant="outline" 
+                    className={`whitespace-nowrap rounded-lg px-4 py-1.5 font-black italic uppercase text-[9px] border-2 transition-all ${
+                      searchParams.get('category') === cat.toLowerCase() 
+                      ? 'bg-orange-600 text-white border-orange-600' 
+                      : 'bg-white text-gray-500 border-gray-100'
+                    }`}
+                  >
+                    {cat}
+                  </Badge>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+      </header>
     </>
   );
 }

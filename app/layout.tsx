@@ -5,6 +5,7 @@ import { Toaster } from "sonner";
 import { CartProvider } from "./context/cartcontext";
 import LayoutWrapper from "@/components/Layoutwrapper";
 import { Suspense } from "react";
+import AuthProvider from "@/components/Authprovider";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
@@ -18,6 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <AuthProvider >
         <CartProvider>
           <Suspense fallback={<div>Loading...</div>}>
           <LayoutWrapper>
@@ -26,6 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </Suspense>
           <Toaster position="top-right" richColors closeButton duration={3000} />
         </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );
