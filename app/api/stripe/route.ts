@@ -2,14 +2,23 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
-// Version error fix karne ke liye humne string ko explicitly define kiya hai
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  // 
-  apiVersion: "2025-12-15.clover" as any, 
-  typescript: true,
-});
+// Build safety: Key na milne par crash nahi hoga
+const stripeKey = process.env.STRIPE_SECRET_KEY || "";
+
+const stripe = stripeKey 
+  ? new Stripe(stripeKey, {
+      apiVersion: "2025-12-15.clover" as any, // Aapka version
+      typescript: true,
+    })
+  : null;
 
 export async function POST(request: Request) {
+  // Agar Stripe initialize nahi hua (Missing Key), toh build crash nahi, 500 error dega
+  if (!stripe) {
+    console.error("STRIPE_SECRET_KEY is missing!");
+    return NextResponse.json({ error: "Stripe configuration error" }, { status: 500 });
+  }
+
   try {
     const { amount } = await request.json();
 
@@ -18,9 +27,8 @@ export async function POST(request: Request) {
     }
 
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: amount, 
+      amount: Math.round(amount), 
       currency: "inr",
-      // Isse saare payment options (UPI, Card, etc.) enable honge
       automatic_payment_methods: {
         enabled: true,
       },
