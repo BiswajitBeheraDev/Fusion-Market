@@ -28,7 +28,8 @@ import {
   ChevronDown,
   Grid,
   ShoppingBag,
-  Tag
+  Tag,
+  ShoppingBasket
 } from 'lucide-react'; 
 import {
   DropdownMenu,
@@ -42,7 +43,6 @@ import { useEffect, useState, useMemo, Suspense } from 'react';
 import { useCart } from '@/app/context/cartcontext';
 import { signOut } from 'next-auth/react';
 
-// Wrap the actual Navbar content to handle useSearchParams() safely in Next.js
 export default function Navbar() {
   return (
     <Suspense fallback={<div className="h-20 bg-[#fafafa]" />}>
@@ -55,12 +55,12 @@ function NavbarContent() {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { shoppingCart, foodCart } = useCart();
+  
+  // Added groceryCart here
+  const { shoppingCart, foodCart, groceryCart } = useCart();
 
   const [searchInput, setSearchInput] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(true);
-  
-  // FIX 1: Hydration mismatch rokne ke liye state
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -74,13 +74,27 @@ function NavbarContent() {
 
   const isShoppingPage = pathname.startsWith('/shopping');
   const isFoodPage = pathname.startsWith('/food');
+  const isgroceryPage = pathname.startsWith('/grocery');
   const isCartPage = pathname.includes('/cart') || pathname.includes('/foodcart');
 
   const shoppingCount = shoppingCart?.length || 0;
   const foodCount = foodCart?.length || 0;
+  const groceryCount = groceryCart?.length || 0;
 
-  const activeCount = isShoppingPage ? shoppingCount : isFoodPage ? foodCount : (shoppingCount + foodCount);
-  const activeCartLink = isShoppingPage ? '/shopping/cart' : '/food/foodcart';
+  // Updated logic: if on grocery page, show grocery count and link
+  const activeCount = isgroceryPage 
+    ? groceryCount 
+    : isShoppingPage 
+    ? shoppingCount 
+    : isFoodPage 
+    ? foodCount 
+    : (shoppingCount + foodCount + groceryCount);
+
+  const activeCartLink = isgroceryPage 
+    ? '/grocery/cart' 
+    : isShoppingPage 
+    ? '/shopping/cart' 
+    : '/food/foodcart';
 
   useEffect(() => {
     setSearchInput(searchParams.get('search') || '');
@@ -102,15 +116,15 @@ function NavbarContent() {
       <div className="container mx-auto flex h-20 items-center justify-between px-4 md:px-6 gap-2 md:gap-4">
         
         <Link href="/dashboard" className="flex items-center gap-2 text-2xl md:text-3xl font-black italic text-gray-900 tracking-tighter shrink-0 transition-transform hover:scale-105">
-          <Utensils className="h-7 w-7 md:h-8 md:w-8 text-orange-600" />
+          <Utensils className={`h-7 w-7 md:h-8 md:w-8 ${isgroceryPage ? 'text-emerald-600' : 'text-orange-600'}`} />
           <span className="hidden sm:inline uppercase">MYSTORE</span>
         </Link>
 
-        {/* Desktop Links */}
         <nav className="hidden md:flex items-center gap-6">
           <Link href="/dashboard" className={`text-xs font-black italic uppercase tracking-widest ${pathname === '/dashboard' ? 'text-orange-600' : 'text-gray-500'}`}>Home</Link>
           <Link href="/shopping" className={`text-xs font-black italic uppercase tracking-widest ${isShoppingPage ? 'text-orange-600' : 'text-gray-500'}`}>Shopping</Link>
           <Link href="/food/menu" className={`text-xs font-black italic uppercase tracking-widest ${isFoodPage ? 'text-orange-600' : 'text-gray-500'}`}>Food</Link>
+          <Link href="/grocery/menu" className={`text-xs font-black italic uppercase tracking-widest ${isgroceryPage ? 'text-emerald-600' : 'text-gray-500'}`}>Grocery</Link>
         </nav>
 
         <div className="hidden md:flex flex-1 items-center justify-center gap-2 max-w-xl">
@@ -152,12 +166,11 @@ function NavbarContent() {
         </div>
 
         <div className="flex items-center gap-2 md:gap-3 shrink-0">
-          {/* FIX 2: Only show cart count after mounting to avoid mismatch */}
           {mounted && !isCartPage && activeCount > 0 && (
             <Button variant="ghost" size="icon" className="relative h-11 w-11 bg-white shadow-sm border rounded-xl" asChild>
               <Link href={activeCartLink}>
                 <ShoppingCart className="h-5 w-5 text-gray-700" />
-                <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center bg-orange-600 text-[10px] font-black border-2 border-[#fafafa]">
+                <Badge className={`absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-[10px] font-black border-2 border-[#fafafa] ${isgroceryPage ? 'bg-emerald-600' : 'bg-orange-600'}`}>
                   {activeCount}
                 </Badge>
               </Link>
@@ -204,11 +217,11 @@ function NavbarContent() {
           <MobileNav 
             shoppingCount={shoppingCount} 
             foodCount={foodCount} 
+            groceryCount={groceryCount}
           />
         </div>
       </div>
 
-      {/* Mobile Search - Also wrapped in mounted check if categories depend on URL */}
       {mounted && isShoppingPage && (
         <div className="md:hidden px-4 pb-4 flex flex-col gap-3 border-t pt-3 border-gray-100 bg-white">
           <div className="relative w-full">
@@ -255,13 +268,13 @@ function NavbarContent() {
   );
 }
 
-// MobileNav separate component to keep it clean
-function MobileNav({ shoppingCount, foodCount }: any) {
+function MobileNav({ shoppingCount, foodCount, groceryCount }: any) {
   const pathname = usePathname();
   const navItems = [
     { name: 'Home', href: '/dashboard', icon: Home },
     { name: 'Shopping', href: '/shopping', icon: ShoppingCart },
     { name: 'Food Menu', href: '/food/menu', icon: Utensils },
+    { name: 'Grocery', href: '/grocery/menu', icon: ShoppingBasket },
     { name: 'Admin Dashboard', href: '/admin/orders', icon: LayoutDashboard },
   ];
 
@@ -308,7 +321,7 @@ export const dummyproducts = [
   { id: 2, category: "Mobiles" },         
   { id: 3, category: "Food-Drink" },
   { id: 4, category: "Accessories" },
-  { id: 5, category: "Footwear" },        
+  { id: 5, category: "Footwear" },         
   { id: 6, category: "Home-Office" },
   { id: 7, category: "Kitchen-Dining" },
   { id: 8, category: "Home-Decor" },
