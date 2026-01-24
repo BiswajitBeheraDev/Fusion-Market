@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, ShoppingBag, Sparkles, SearchX, ShoppingCart, Eye } from 'lucide-react';
+import { Search, ShoppingBag, Sparkles, SearchX, ShoppingCart, Eye, Timer, Zap } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -17,7 +17,6 @@ export default function GroceryMenuPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const { groceryCart, addToGroceryCart } = useCart();
 
-  // Filter logic ab sirf search par kaam karegi
   const filteredGrocery = useMemo(() => {
     return dummyGrocery.filter((item) => {
       return searchQuery === '' || 
@@ -38,24 +37,25 @@ export default function GroceryMenuPage() {
 
         <div className="container mx-auto px-6 relative z-10 text-center">
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6 }}>
-            <div className="inline-flex items-center gap-2 bg-green-500/10 backdrop-blur-xl px-4 py-2 rounded-2xl border border-green-500/20 mb-6">
-              <Sparkles className="text-green-400 h-4 w-4" />
-              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-green-300 italic">Fresh & Healthy</span>
+            {/* Delivery Badge Added Here */}
+            <div className="inline-flex items-center gap-2 bg-green-500/20 backdrop-blur-xl px-4 py-2 rounded-2xl border border-green-500/30 mb-6">
+              <Timer className="text-green-400 h-4 w-4 animate-pulse" />
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-green-300 italic">Fast Delivery in 30 Mins</span>
             </div>
             
             <h1 className="text-5xl md:text-8xl font-black italic tracking-tighter uppercase leading-none text-white">
-              GROCERY <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-500">HERE.</span> <br />
-              SHOP <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-green-400">NOW.</span>
+              GROCERY <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-500">FAST.</span> <br />
+              DELIVERED <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-green-400">NOW.</span>
             </h1>
             
             <p className="mt-6 text-slate-400 font-bold max-w-xl mx-auto text-lg md:text-xl tracking-tight leading-relaxed">
-              Fresh groceries, daily essentials delivered fast with <span className="text-white">premium quality</span> and care.
+              Fresh groceries, daily essentials delivered in <span className="text-green-400 underline decoration-green-500/30 underline-offset-4 italic">30 minutes</span> or less.
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Search Section (Switch Hata Diya) */}
+      {/* Search Section */}
       <div className="container mx-auto px-6 -mt-12 relative z-30">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white/90 backdrop-blur-2xl p-6 rounded-[35px] shadow-xl border border-white">
           <div className="relative w-full">
@@ -72,9 +72,16 @@ export default function GroceryMenuPage() {
 
       {/* Grocery Grid */}
       <section className="container mx-auto px-6 py-20">
-        <div className="flex items-center gap-3 mb-12">
-          <ShoppingBag className="text-green-600" size={28} />
-          <h2 className="text-4xl font-black italic tracking-tighter uppercase text-slate-900">Grocery Store</h2>
+        <div className="flex items-center justify-between mb-12">
+          <div className="flex items-center gap-3">
+            <ShoppingBag className="text-green-600" size={28} />
+            <h2 className="text-4xl font-black italic tracking-tighter uppercase text-slate-900">Grocery Store</h2>
+          </div>
+          {/* Quick Info Tag */}
+          <div className="hidden md:flex items-center gap-2 bg-slate-100 px-4 py-2 rounded-full">
+            <Zap className="text-yellow-500 h-4 w-4 fill-yellow-500" />
+            <span className="text-[11px] font-black italic uppercase tracking-tighter">Instant Checkout Active</span>
+          </div>
         </div>
 
         <AnimatePresence mode="wait">
@@ -92,7 +99,11 @@ export default function GroceryMenuPage() {
                     <div className="relative h-64 w-full overflow-hidden rounded-[35px] bg-slate-100">
                       <Image src={item.image} alt={item.name} fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
                       
-                      {/* Veg Badge removed from here */}
+                      {/* Delivery Time Badge on Card */}
+                      <div className="absolute top-5 left-5 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-2xl flex items-center gap-2 shadow-sm border border-slate-200/50">
+                        <Timer size={14} className="text-green-600" />
+                        <span className="text-[10px] font-black text-slate-900 italic uppercase">30 Min</span>
+                      </div>
 
                       <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                         <Link href={`/grocery/${item.id}`}>
@@ -106,13 +117,14 @@ export default function GroceryMenuPage() {
                     <div className="mt-8 px-2">
                       <h3 className="text-2xl font-black italic uppercase tracking-tighter text-slate-900 line-clamp-1">{item.name}</h3>
                       <p className="text-[13px] font-bold text-slate-400 mt-2 line-clamp-2 leading-relaxed italic">
-                        {item.description || "Fresh & premium quality item."}
+                        {item.description || "Fresh & premium quality item delivered fast."}
                       </p>
 
                       <div className="mt-5 flex items-center gap-3">
                         <span className="text-3xl font-black text-slate-900 italic tracking-tighter">₹{item.price}</span>
                         <div className="bg-green-100 text-green-600 px-3 py-1 rounded-lg text-[9px] font-black uppercase italic tracking-tighter border border-green-200">
-                          FRESH STOCK
+                          {/* Updated badge text */}
+                          FLASH STOCK
                         </div>
                       </div>
 
@@ -121,7 +133,10 @@ export default function GroceryMenuPage() {
                           onClick={() => { 
                             if(!isInCart) { 
                               addToGroceryCart(item); 
-                              toast.success(`${item.name} added to cart!`); 
+                              toast.success(`${item.name} added to cart!`, {
+                                description: "Ready for 30-min delivery",
+                                icon: <Zap size={14} className="text-yellow-500 fill-yellow-500" />
+                              }); 
                             }
                           }}
                           className={`flex-1 h-16 rounded-[22px] font-black italic uppercase tracking-tighter transition-all ${

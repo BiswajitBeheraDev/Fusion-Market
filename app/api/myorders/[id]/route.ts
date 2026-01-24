@@ -8,7 +8,6 @@ export async function GET(
   try {
     const { id } = await params;
     
-    // Debugging terminal mein dekhne ke liye
     console.log("Searching Order ID:", id);
 
     const order = await prisma.order.findUnique({

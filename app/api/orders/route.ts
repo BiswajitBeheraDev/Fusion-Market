@@ -35,7 +35,6 @@ export async function POST(req: Request) {
         gender: formData.gender,
         state: formData.state,
         
-        // YAHAN FIX HAI: 'addresses' array ko 'address' field mein bhej rahe hain
         address: formattedAddress, 
         
         city: formData.city,

@@ -16,6 +16,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Loader2, Truck, CreditCard, ShoppingBasket, ShieldCheck, Receipt } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -25,7 +26,6 @@ function GroceryCheckoutContent({ clientSecret }: { clientSecret: string }) {
   const stripe = useStripe();
   const elements = useElements();
 
-  // --- Grocery Logic ---
   const packagingFee = subtotal > 0 ? 20 : 0;
   const deliveryCharge = (subtotal > 0 && subtotal < 799) ? 50 : 0;
   const finalGrandTotal = subtotal + packagingFee + deliveryCharge;
@@ -39,13 +39,11 @@ function GroceryCheckoutContent({ clientSecret }: { clientSecret: string }) {
     try {
       if (paymentMethod === 'online') {
         if (!stripe || !elements) throw new Error("Stripe context not found");
-
         const { error, paymentIntent } = await stripe.confirmPayment({
           elements,
           confirmParams: { return_url: `${window.location.origin}/ordersucess` },
           redirect: 'if_required', 
         });
-
         if (error) throw new Error(error.message);
         if (paymentIntent && paymentIntent.status !== 'succeeded') throw new Error("Payment failed");
       }
@@ -58,12 +56,11 @@ function GroceryCheckoutContent({ clientSecret }: { clientSecret: string }) {
           total: finalGrandTotal, 
           formData, 
           paymentMethod, 
-          orderType: 'grocery' // Type change kiya
+          orderType: 'grocery' 
         }),
       });
 
       if (!dbRes.ok) throw new Error("Database update failed");
-      
       toast.success("Groceries Booked! Freshness arriving soon! 🥦");
       clearGroceryCart();
       window.location.href = "/ordersucess";
@@ -77,16 +74,16 @@ function GroceryCheckoutContent({ clientSecret }: { clientSecret: string }) {
   return (
     <div className="min-h-screen bg-slate-50 pt-20 pb-12">
       <div className="container mx-auto px-4 max-w-6xl">
-        <h1 className="text-4xl font-black tracking-tighter mb-8 uppercase italic flex items-center gap-3 text-emerald-700">
+        <h1 className="text-3xl md:text-4xl font-black tracking-tighter mb-8 uppercase italic flex items-center gap-3 text-emerald-700">
           <ShoppingBasket size={40} className="text-emerald-600" /> Finalize Your Basket
         </h1>
 
         <FormProvider {...methods}>
           <form onSubmit={methods.handleSubmit(onOrderSubmit)} className="grid lg:grid-cols-5 gap-8">
             
-            {/* Left: Address Section */}
+            {/* LEFT: Address Section Only */}
             <div className="lg:col-span-3 space-y-6">
-              <Card className="shadow-2xl border-none rounded-[40px] overflow-hidden">
+              <Card className="shadow-2xl border-none rounded-[40px] overflow-hidden bg-white">
                 <CardHeader className="bg-emerald-50 border-b p-6">
                   <CardTitle className="text-xs font-black uppercase text-emerald-700 tracking-widest flex items-center gap-2">
                     <Truck size={18} /> Shipping Address
@@ -96,44 +93,13 @@ function GroceryCheckoutContent({ clientSecret }: { clientSecret: string }) {
                   <AddressForm />
                 </CardContent>
               </Card>
-
-              {/* Payment Selection Card */}
-              <Card className="p-8 shadow-2xl border-none rounded-[40px] bg-white">
-                <h3 className="text-lg font-black uppercase mb-4 italic text-slate-800">Choose Payment Method</h3>
-                <RadioGroup value={paymentMethod} onValueChange={(v) => setPaymentMethod(v as any)} className="grid gap-4">
-                  <Label htmlFor="cod" className={cn("flex items-center justify-between p-5 border-2 rounded-3xl cursor-pointer transition-all hover:bg-slate-50", paymentMethod === 'cod' ? "border-emerald-500 bg-emerald-50/50" : "border-slate-100")}>
-                    <div className="flex items-center gap-4">
-                      <RadioGroupItem value="cod" id="cod" />
-                      <div className="flex flex-col">
-                        <span className="font-black text-slate-900 uppercase italic">Cash on Delivery</span>
-                        <span className="text-[10px] text-slate-400 font-bold">Pay when your veggies arrive</span>
-                      </div>
-                    </div>
-                  </Label>
-
-                  <Label htmlFor="online" className={cn("flex items-center justify-between p-5 border-2 rounded-3xl cursor-pointer transition-all hover:bg-slate-50", paymentMethod === 'online' ? "border-emerald-500 bg-emerald-50/50" : "border-slate-100")}>
-                    <div className="flex items-center gap-4">
-                      <RadioGroupItem value="online" id="online" />
-                      <div className="flex flex-col">
-                        <span className="font-black text-slate-900 uppercase italic">Pay Online Now</span>
-                        <span className="text-[10px] text-slate-400 font-bold">Secure Card / UPI / Netbanking</span>
-                      </div>
-                    </div>
-                    <CreditCard className={paymentMethod === 'online' ? "text-emerald-600" : "text-slate-300"} />
-                  </Label>
-                </RadioGroup>
-
-                {paymentMethod === 'online' && clientSecret && (
-                  <div className="mt-6 p-4 border-2 border-emerald-100 rounded-[28px] bg-white animate-in zoom-in-95 duration-300">
-                    <PaymentElement options={{ layout: 'accordion' }} />
-                  </div>
-                )}
-              </Card>
             </div>
 
-            {/* Right: Summary Section */}
+            {/* RIGHT: Summary + Payment (New Layout) */}
             <div className="lg:col-span-2">
               <div className="sticky top-24 space-y-6">
+                
+                {/* 1. Summary Card */}
                 <Card className="shadow-2xl border-none rounded-[40px] overflow-hidden bg-slate-900 text-white">
                   <CardHeader className="bg-white/5 border-b border-white/10 p-6">
                     <CardTitle className="text-xs font-black uppercase tracking-widest flex items-center gap-2 italic">
@@ -162,18 +128,51 @@ function GroceryCheckoutContent({ clientSecret }: { clientSecret: string }) {
                   </CardContent>
                 </Card>
 
+                {/* 2. Payment Method Card (Now Under Summary) */}
+                <Card className="p-6 shadow-2xl border-none rounded-[35px] bg-white">
+                  <h3 className="text-sm font-black uppercase mb-4 italic text-slate-800 tracking-tight">Select Payment</h3>
+                  <RadioGroup value={paymentMethod} onValueChange={(v) => setPaymentMethod(v as any)} className="grid gap-3">
+                    <Label htmlFor="cod" className={cn("flex items-center justify-between p-4 border-2 rounded-2xl cursor-pointer transition-all", paymentMethod === 'cod' ? "border-emerald-500 bg-emerald-50/50" : "border-slate-100")}>
+                      <div className="flex items-center gap-3">
+                        <RadioGroupItem value="cod" id="cod" />
+                        <div className="flex flex-col">
+                          <span className="font-black text-slate-900 text-xs uppercase italic">Cash on Delivery</span>
+                          <span className="text-[9px] text-slate-400 font-bold leading-none">Pay at doorstep</span>
+                        </div>
+                      </div>
+                    </Label>
+
+                    <Label htmlFor="online" className={cn("flex items-center justify-between p-4 border-2 rounded-2xl cursor-pointer transition-all", paymentMethod === 'online' ? "border-emerald-500 bg-emerald-50/50" : "border-slate-100")}>
+                      <div className="flex items-center gap-3">
+                        <RadioGroupItem value="online" id="online" />
+                        <div className="flex flex-col">
+                          <span className="font-black text-slate-900 text-xs uppercase italic">Online Payment</span>
+                          <span className="text-[9px] text-slate-400 font-bold leading-none">Card / UPI / Netbanking</span>
+                        </div>
+                      </div>
+                      <CreditCard size={16} className={paymentMethod === 'online' ? "text-emerald-600" : "text-slate-300"} />
+                    </Label>
+                  </RadioGroup>
+
+                  {paymentMethod === 'online' && clientSecret && (
+                    <div className="mt-4 p-3 border-2 border-emerald-100 rounded-2xl bg-white animate-in slide-in-from-top-2 duration-300">
+                      <PaymentElement options={{ layout: 'accordion' }} />
+                    </div>
+                  )}
+                </Card>
+
+                {/* 3. Action Button */}
                 <Button 
                   type="submit" 
                   disabled={loading} 
-                  onClick={() => methods.handleSubmit(onOrderSubmit)()}
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 h-20 text-xl font-black rounded-[30px] shadow-2xl shadow-emerald-200 uppercase tracking-widest transition-transform active:scale-95"
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 h-16 text-lg font-black rounded-[25px] shadow-xl shadow-emerald-100 uppercase tracking-widest transition-transform active:scale-95"
                 >
-                  {loading ? <Loader2 className="animate-spin" /> : `Place Order ₹${finalGrandTotal}`}
+                  {loading ? <Loader2 className="animate-spin" /> : `Place Order`}
                 </Button>
 
                 <div className="flex items-center justify-center gap-2 text-slate-400">
-                  <ShieldCheck size={16} />
-                  <span className="text-[10px] font-black uppercase tracking-widest">Safe & Secure Freshness</span>
+                  <ShieldCheck size={14} />
+                  <span className="text-[9px] font-black uppercase tracking-widest">Safe & Secure Freshness</span>
                 </div>
               </div>
             </div>
@@ -184,12 +183,11 @@ function GroceryCheckoutContent({ clientSecret }: { clientSecret: string }) {
   );
 }
 
+// ... rest of GroceryCheckoutPage (unchanged)
 export default function GroceryCheckoutPage() {
   const { groceryCart, getGroceryTotal } = useCart();
   const [clientSecret, setClientSecret] = useState("");
   const subtotal = getGroceryTotal();
-  
-  // Same calculation for Stripe
   const total = subtotal + (subtotal > 0 ? 20 : 0) + (subtotal > 0 && subtotal < 799 ? 50 : 0);
 
   useEffect(() => {
@@ -211,9 +209,9 @@ export default function GroceryCheckoutPage() {
         <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600">
             <ShoppingBasket size={40} />
         </div>
-        <h2 className="text-2xl font-black italic uppercase tracking-tighter">Your basket is empty! 🥦</h2>
-        <Button asChild className="bg-emerald-600 rounded-xl">
-            <a href="/grocery">Go Shopping</a>
+        <h2 className="text-2xl font-black italic uppercase tracking-tighter text-slate-800">Your basket is empty! 🥦</h2>
+        <Button asChild className="bg-emerald-600 rounded-xl px-8 h-12 font-bold uppercase tracking-widest">
+            <Link href="/grocery/menu">Go Shopping</Link>
         </Button>
       </div>
     );
@@ -232,7 +230,7 @@ export default function GroceryCheckoutPage() {
   ) : (
     <div className="h-screen flex flex-col items-center justify-center gap-4">
       <Loader2 className="animate-spin text-emerald-600" size={40} />
-      <span className="font-black italic uppercase text-slate-400">Checking Freshness...</span>
+      <span className="font-black italic uppercase text-slate-400 tracking-widest">Checking Freshness...</span>
     </div>
   );
 }

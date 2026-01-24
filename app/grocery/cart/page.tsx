@@ -2,7 +2,8 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Trash2, ShoppingBag, Truck, ShieldCheck, ArrowLeft, Plus, Minus } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Trash2, ShoppingBag, Truck, CreditCard, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useCart } from '@/app/context/cartcontext';
@@ -12,6 +13,8 @@ export default function GroceryCartPage() {
   const { groceryCart, updateGroceryQuantity, removeFromGroceryCart, getGroceryTotal } = useCart();
   
   const subtotal = getGroceryTotal();
+  
+  // --- Pricing Logic (Matching Food Cart Style) ---
   const packagingFee = subtotal > 0 ? 20 : 0; 
   
   let deliveryCharge = 0;
@@ -25,15 +28,15 @@ export default function GroceryCartPage() {
 
   if (groceryCart.length === 0) {
     return (
-      <div className="min-h-screen bg-emerald-50/30 flex items-center justify-center p-4">
-        <Card className="max-w-md w-full p-10 text-center shadow-2xl rounded-[40px] border-none bg-white">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <Card className="max-w-md w-full p-10 text-center shadow-2xl rounded-[40px] border-none">
           <div className="bg-emerald-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
             <ShoppingBag className="text-emerald-600" size={40} />
           </div>
-          <h2 className="text-3xl font-black tracking-tighter mb-2 text-slate-900 uppercase italic">Your Basket is Empty</h2>
-          <p className="text-slate-500 font-medium mb-8">Stock up your kitchen with fresh groceries!</p>
-          <Button asChild className="w-full bg-emerald-600 hover:bg-emerald-700 h-14 rounded-2xl font-black italic tracking-widest">
-            <Link href="/grocery">SHOP GROCERIES</Link>
+          <h2 className="text-3xl font-black tracking-tighter mb-2">BASKET IS EMPTY</h2>
+          <p className="text-gray-500 font-medium mb-8">Stock up your kitchen with fresh groceries!</p>
+          <Button asChild className="w-full bg-emerald-600 hover:bg-emerald-700 h-14 rounded-2xl font-bold shadow-lg transition-all active:scale-95">
+            <Link href="/grocery">BROWSE GROCERIES</Link>
           </Button>
         </Card>
       </div>
@@ -41,67 +44,63 @@ export default function GroceryCartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] pt-24 pb-12">
-      <div className="container mx-auto px-4 max-w-6xl">
+    <div className="min-h-screen bg-[#F8F9FA] pt-24 pb-12">
+      <div className="container mx-auto px-2 sm:px-4 max-w-6xl">
         <div className="flex items-center gap-4 mb-10">
-            <Link href="/grocery" className="p-2 bg-white rounded-full shadow-sm hover:text-emerald-600">
+            <Link href="/grocery" className="p-2 bg-white rounded-full shadow-sm hover:text-emerald-600 transition-colors">
                 <ArrowLeft size={24} />
             </Link>
-            <h1 className="text-5xl font-black text-slate-900 tracking-tighter italic uppercase">Grocery Basket</h1>
+            <h1 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tighter italic uppercase">Grocery Basket</h1>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-10">
           
-          {/* LEFT: Product List */}
+          {/* LEFT: Product List (Exactly like Food Cart) */}
           <div className="lg:col-span-2 space-y-4">
             {groceryCart.map((item) => (
-              <Card key={item.id} className="border-none shadow-sm rounded-[30px] overflow-hidden bg-white hover:shadow-md transition-all">
-                <CardContent className="p-5">
-                  <div className="flex flex-col sm:flex-row items-center gap-6">
-                    <div className="relative h-24 w-24 bg-slate-50 rounded-2xl overflow-hidden flex-shrink-0">
+              <Card key={item.id} className="border-none shadow-sm rounded-3xl overflow-hidden hover:shadow-md transition-shadow bg-white">
+                <CardContent className="p-3 sm:p-6">
+                  {/* Neat Horizontal Row for Mobile & Desktop */}
+                  <div className="flex items-center justify-between gap-2 sm:gap-6">
+                    
+                    {/* Image & Info */}
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                      <div className="relative h-16 w-16 sm:h-24 sm:w-24 bg-gray-100 rounded-2xl overflow-hidden shadow-inner flex-shrink-0">
                         <Image 
-                        src={item.image || "/fallback-grocery.jpg"} 
-                        alt={item.name} 
-                        fill 
-                        className="object-cover" 
-                        />              
-                     </div>
-                    <div className="flex-1 text-center sm:text-left">
-                      <h3 className="text-lg font-black text-slate-800 uppercase tracking-tight line-clamp-1">{item.name}</h3>
-                      <p className="text-emerald-600 font-black text-xl">₹{item.price}</p>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase mt-1">Freshly Sourced</p>
+                          src={item.image || "/fallback-grocery.jpg"} 
+                          alt={item.name} 
+                          fill 
+                          className="object-cover" 
+                        />
+                      </div>
+
+                      <div className="min-w-0">
+                        <h3 className="text-[11px] sm:text-lg font-black text-gray-800 uppercase tracking-tight truncate leading-tight">
+                          {item.name}
+                        </h3>
+                        <p className="text-emerald-600 font-black text-[10px] sm:text-lg italic mt-1 leading-none">₹{item.price}</p>
+                      </div>
                     </div>
 
-                    <div className="flex items-center gap-6">
-                      {/* Quantity Controls - Fixed the Error here */}
-                      <div className="flex items-center bg-slate-50 rounded-2xl p-1 border border-slate-100 gap-1">
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-8 w-8 rounded-xl hover:bg-white hover:text-emerald-600"
-                          onClick={() => updateGroceryQuantity(item.id, item.quantity - 1)}
-                        >
-                          <Minus size={14} />
-                        </Button>
-                        
-                        <span className="w-8 text-center font-black text-md">
-                          {item.quantity}
-                        </span>
-
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-8 w-8 rounded-xl hover:bg-white hover:text-emerald-600"
-                          onClick={() => updateGroceryQuantity(item.id, item.quantity + 1)}
-                        >
-                          <Plus size={14} />
-                        </Button>
+                    {/* Quantity & Price Row */}
+                    <div className="flex items-center gap-2 sm:gap-6 flex-shrink-0">
+                      {/* Numeric Input (Matching Food Cart Style) */}
+                      <div className="flex items-center bg-gray-100 rounded-lg sm:rounded-xl p-0.5 border border-gray-200 flex-shrink-0">
+                        <Input
+                          type="number"
+                          min="1"
+                          value={item.quantity}
+                          onChange={(e) => updateGroceryQuantity(item.id, Math.max(1, Number(e.target.value)))}
+                          className="w-8 h-7 sm:w-14 sm:h-10 border-none bg-transparent text-center font-black text-xs sm:text-lg focus-visible:ring-0 p-0"
+                        />
                       </div>
                       
-                      <p className="text-xl font-black text-slate-900 min-w-[90px] text-right">
+                      {/* Subtotal */}
+                      <p className="text-[11px] sm:text-xl font-black text-gray-900 min-w-[45px] sm:min-w-[80px] text-right italic">
                         ₹{item.price * item.quantity}
                       </p>
 
+                      {/* Remove Button */}
                       <Button
                         variant="ghost"
                         size="icon"
@@ -109,74 +108,78 @@ export default function GroceryCartPage() {
                             removeFromGroceryCart(item.id);
                             toast.error("Removed from basket");
                         }}
-                        className="hover:bg-red-50 text-red-400"
+                        className="hover:bg-red-50 text-red-500 h-7 w-7 sm:h-10 sm:w-10 flex-shrink-0"
                       >
-                        <Trash2 size={18} />
+                        <Trash2 className="h-4 w-4 sm:h-5 sm:w-5" />
                       </Button>
                     </div>
+
                   </div>
                 </CardContent>
               </Card>
             ))}
           </div>
 
-          {/* RIGHT: Order Summary */}
+          {/* RIGHT: Bill Details (Exactly like Food Cart) */}
           <div className="lg:sticky lg:top-28 h-fit">
             <Card className="border-none shadow-2xl rounded-[40px] bg-white overflow-hidden">
-              <div className="bg-emerald-600 p-6 text-white text-center">
+              <div className="bg-slate-900 p-6 text-white text-center">
                 <h2 className="text-xl font-black tracking-widest uppercase flex items-center justify-center gap-2 italic">
-                   Order Summary
+                  <CreditCard size={20} /> Bill Details
                 </h2>
               </div>
               
-              <CardContent className="p-8 space-y-6">
+              <CardContent className="p-6 sm:p-8 space-y-5">
+                <div className="space-y-3 pb-4 border-b border-dashed border-gray-200">
+                   <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Order Summary</p>
+                   {groceryCart.map(item => (
+                     <div key={item.id} className="flex justify-between text-[11px] sm:text-sm font-bold text-gray-600">
+                       <span className="truncate pr-4">{item.name} x {item.quantity}</span>
+                       <span>₹{item.price * item.quantity}</span>
+                     </div>
+                   ))}
+                </div>
+
                 <div className="space-y-4">
-                  <div className="flex justify-between font-bold text-slate-700">
-                    <span>Basket Subtotal</span>
+                  <div className="flex justify-between font-bold text-gray-700 text-xs sm:text-sm">
+                    <span className="uppercase tracking-tighter">Basket Total</span>
                     <span>₹{subtotal}</span>
                   </div>
 
-                  <div className="flex justify-between font-bold text-slate-500 text-sm">
-                    <span className="flex items-center gap-2 uppercase text-[11px] font-black italic">Packaging Fee</span>
+                  <div className="flex justify-between font-bold text-gray-500 text-[10px] sm:text-xs">
+                    <span className="flex items-center gap-1 uppercase tracking-tighter">Packaging Fee</span>
                     <span>₹{packagingFee}</span>
                   </div>
 
-                  <div className="flex justify-between font-bold text-slate-500 text-sm">
-                    <span className="flex items-center gap-2 uppercase text-[11px] font-black italic"><Truck size={14} /> Delivery Charge</span>
+                  <div className="flex justify-between font-bold text-gray-500 text-[10px] sm:text-xs">
+                    <span className="flex items-center gap-1 uppercase tracking-tighter"><Truck size={14} /> Delivery Fee</span>
                     <span className={deliveryCharge === 0 ? "text-emerald-600" : ""}>
                       {deliveryCharge === 0 ? 'FREE' : `₹${deliveryCharge}`}
                     </span>
                   </div>
                 </div>
 
-                {subtotal < 799 && (
-                    <div className="bg-blue-50 p-3 rounded-2xl border border-blue-100 flex items-start gap-3">
-                        <ShieldCheck className="text-blue-500 flex-shrink-0" size={18} />
-                        <p className="text-[10px] font-bold text-blue-700 leading-tight">
-                            Add ₹{799 - subtotal} more to unlock <span className="underline">FREE DELIVERY</span>
-                        </p>
-                    </div>
-                )}
-
-                <div className="pt-6 border-t-2 border-slate-100">
+                {/* Total & Checkout */}
+                <div className="pt-6 border-t-4 border-slate-900">
                   <div className="flex justify-between items-end mb-6">
                     <div>
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Amount to pay</p>
-                      <p className="text-4xl font-black text-slate-900 tracking-tighter italic">₹{grandTotal}</p>
+                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-tighter">To Pay</p>
+                      <p className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tighter italic leading-none">₹{grandTotal}</p>
                     </div>
                     {deliveryCharge === 0 && (
-                      <span className="bg-emerald-100 text-emerald-700 text-[10px] font-black px-3 py-1 rounded-full uppercase italic">Saved Delivery</span>
+                      <Badge className="bg-emerald-100 text-emerald-700 font-black border-none px-3 py-1 uppercase tracking-tighter">SAVED ₹50</Badge>
                     )}
                   </div>
 
-                  <Button asChild size="lg" className="w-full bg-slate-950 hover:bg-emerald-600 text-white font-black h-16 rounded-[22px] shadow-xl uppercase tracking-widest text-lg transition-all active:scale-95">
-                    <Link href="/grocery/grocerycheckout">Checkout Now</Link>
+                  <Button asChild size="lg" className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black h-14 sm:h-16 rounded-2xl shadow-xl uppercase tracking-widest text-base sm:text-lg transition-transform active:scale-95">
+                    <Link href="/grocery/grocerycheckout">Confirm Order</Link>
                   </Button>
-                </div>
 
-                <div className="flex items-center justify-center gap-2 py-2">
-                    <ShieldCheck size={14} className="text-emerald-600" />
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">100% Safe & Secure Payments</span>
+                  <p className="text-center mt-4">
+                    <Link href="/grocery" className="text-xs font-black text-gray-400 uppercase tracking-widest hover:text-emerald-600 transition-colors">
+                      ← Add More Groceries
+                    </Link>
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -186,4 +189,12 @@ export default function GroceryCartPage() {
       </div>
     </div>
   );
+}
+
+function Badge({ children, className }: { children: React.ReactNode, className?: string }) {
+  return (
+    <span className={`text-[10px] rounded-md px-2 py-1 ${className}`}>
+      {children}
+    </span>
+  )
 }

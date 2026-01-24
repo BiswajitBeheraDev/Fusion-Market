@@ -114,13 +114,9 @@ export default function Dashboard() {
             </motion.div>
           </div>
 
-          {/* Right Side: Circular Animated Gallery */}
           <div className="order-1 lg:order-2 flex justify-center items-center relative py-10">
-            {/* Background Glow */}
             <div className="absolute w-[300px] h-[300px] md:w-[550px] md:h-[550px] bg-white/20 rounded-full blur-[100px] -z-10" />
-
             <div className="relative w-[300px] h-[300px] md:w-[500px] md:h-[500px]">
-              {/* Outer White Ring */}
               <div className="absolute inset-0 rounded-full border-[10px] md:border-[20px] border-white shadow-2xl overflow-hidden bg-gray-100 flex items-center justify-center">
                 <AnimatePresence mode="wait">
                   <motion.div

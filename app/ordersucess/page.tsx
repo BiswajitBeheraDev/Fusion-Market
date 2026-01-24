@@ -1,7 +1,6 @@
 'use client';
 
-import { Suspense, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { CheckCircle2, ArrowRight, Copy, ShoppingBag, UtensilsCrossed } from "lucide-react";
@@ -11,12 +10,27 @@ import confetti from "canvas-confetti";
 import { toast } from "sonner";
 
 function SuccessContent() {
-  const searchParams = useSearchParams();
-  // eslint-disable-next-line react-hooks/purity
-  const orderId = searchParams.get('id') || "OMNI-" + Math.random().toString(36).substr(2, 9).toUpperCase();
+  const [orderId, setOrderId] = useState<string>("");
 
   useEffect(() => {
-    // Celebration effect on mount
+    // Sequential ID Logic using LocalStorage
+    const lastId = localStorage.getItem('last_order_id');
+    const nextId = lastId ? parseInt(lastId) + 1 : 1;
+    
+    // Sirf ek baar set karein taaki refresh par change na ho (Session storage better ho sakta hai depending on use-case)
+    const currentSessionId = sessionStorage.getItem('current_order_id');
+    
+    if (currentSessionId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setOrderId(currentSessionId);
+    } else {
+      const finalId = nextId.toString();
+      setOrderId(finalId);
+      localStorage.setItem('last_order_id', finalId);
+      sessionStorage.setItem('current_order_id', finalId);
+    }
+
+    // Celebration effect
     const duration = 3 * 1000;
     const end = Date.now() + duration;
 
@@ -57,7 +71,6 @@ function SuccessContent() {
       >
         <Card className="p-8 md:p-12 text-center rounded-[50px] shadow-[0_32px_64px_-15px_rgba(0,0,0,0.1)] border-none bg-white relative overflow-hidden">
           
-          {/* Top Icon Animation */}
           <div className="flex justify-center mb-8">
             <motion.div 
               initial={{ scale: 0 }}
@@ -80,11 +93,10 @@ function SuccessContent() {
             Sit back and relax! Your order has been placed successfully and our team is already on it.
           </p>
 
-          {/* Order ID Badge */}
           <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl p-4 mb-10 flex items-center justify-between group">
             <div className="text-left">
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Order Reference</p>
-              <p className="text-lg font-black text-slate-900 tracking-tight">#{orderId}</p>
+              <p className="text-2xl font-black text-slate-900 tracking-tight">#{orderId}</p>
             </div>
             <button 
               onClick={copyId}
@@ -97,7 +109,7 @@ function SuccessContent() {
           <div className="grid gap-4">
             <Button 
               asChild 
-              className="w-full bg-slate-900 hover:bg-slate-800 h-16 rounded-2xl font-black italic text-xl group transition-all"
+              className="w-full bg-slate-900 hover:bg-slate-800 h-16 rounded-2xl font-black italic text-xl group transition-all shadow-lg"
             >
               <Link href={`/food/track`}>
                 TRACK ORDER <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" />

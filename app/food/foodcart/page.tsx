@@ -104,7 +104,6 @@ export default function FoodCartPage() {
             ))}
           </div>
 
-          {/* RIGHT: Price Breakdown */}
           <div className="lg:sticky lg:top-28 h-fit">
             <Card className="border-none shadow-2xl rounded-[40px] bg-white overflow-hidden">
               <div className="bg-slate-900 p-6 text-white text-center">
@@ -114,7 +113,6 @@ export default function FoodCartPage() {
               </div>
               
               <CardContent className="p-8 space-y-5">
-                {/* Item Summary */}
                 <div className="space-y-3 pb-4 border-b border-dashed">
                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Order Summary</p>
                    {foodCart.map(item => (
@@ -125,7 +123,6 @@ export default function FoodCartPage() {
                    ))}
                 </div>
 
-                {/* Charges */}
                 <div className="space-y-4">
                   <div className="flex justify-between font-bold text-gray-700">
                     <span className="flex items-center gap-2">Item Total</span>
@@ -177,7 +174,6 @@ export default function FoodCartPage() {
   );
 }
 
-// Chota Badge component agar imported nahi hai
 function Badge({ children, className }: { children: React.ReactNode, className?: string }) {
   return (
     <span className={`text-[10px] rounded-md px-2 py-1 ${className}`}>
